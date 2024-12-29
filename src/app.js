@@ -15,7 +15,7 @@ app.use(cors({
 app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
-app.use(cookieParser)
+app.use(cookieParser())
 
 app.get("/", (req, res) => {
     console.log("Home route hit");
@@ -25,4 +25,5 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/healthCheck", healthRouter)
+
 export default app

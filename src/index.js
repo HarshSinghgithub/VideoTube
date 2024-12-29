@@ -4,6 +4,8 @@ import app from "./app.js"
 
 configDotenv({ path: ".env" })
 
+console.log("Connecting to DB")
+
 connectDB()
     .then(() => {
         app.listen(process.env.PORT || 9000,

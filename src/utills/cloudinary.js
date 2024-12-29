@@ -1,6 +1,9 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { response } from 'express';
 import fs from "fs";
+import { configDotenv } from "dotenv"
+
+configDotenv({ path: ".env" })
 
 // Configuration
 cloudinary.config({
@@ -13,13 +16,13 @@ const uploadOnCloudinary = async (localFilePath) => {
     try{
         if(!localFilePath) return null
 
-        response = await cloudinary.uploader.upload(localFilePath)
+        const response = await cloudinary.uploader.upload(localFilePath, {resource_type:"auto"})
         fs.unlinkSync(localFilePath)
 
         return response
     }
     catch(error){
-        console.log(error)
+        console.log("Error while uploading image on cloudinary",error)
         fs.unlinkSync(localFilePath);
     }
 }

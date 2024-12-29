@@ -1,12 +1,26 @@
 import {User} from "../models/User.js"
 import { APIResponse } from "../utills/APIRespones.js";
-import { uploadOnCloudinary } from "../utills/clodinary.js";
+import { uploadOnCloudinary } from "../utills/cloudinary.js";
 
 const registerUser = async (req, res) => {
+    console.log("Reached to registerUser controller")
     try{
+
+        console.log("Request Body: ", req.body)
+        console.log("Request files: ", req.file)
+        console.log("path: ", req.file.path)
+
+        if(!req.body){
+            return APIResponse.error(res, "Body is empty", "", 500)
+        }
+
+        if(!req.file){
+            return APIResponse.error(res, "Avatar is required", "", 500)
+        }
+
         const {userName, fullName, email, password} = req.body;
 
-        if([fullName, userName, email, password].some((field) => field?.trim() === "")){
+        if([fullName, userName, email, password].some((field) => !field || field?.trim() === "")){
             return APIResponse.error(res, "All fields are required", "", 500);
         }
 
@@ -18,11 +32,7 @@ const registerUser = async (req, res) => {
             return APIResponse.error(res, "User with this username or email already exists", "", 201);
         }
 
-        const avatarLocalPath = req.files?.avatar[0]?.path
-
-        if(!avatarLocalPath){
-            return APIResponse.error(res, "Avatar is required", "", 500);
-        }
+        const avatarLocalPath = req.file.path
 
         const avatar = await uploadOnCloudinary(avatarLocalPath);
 
@@ -50,7 +60,9 @@ const registerUser = async (req, res) => {
 
     }
     catch(error){
-        console.log(error)
+        console.log("Some error occured while registering user", error)
+
+        return APIResponse.error(res, error, "", 500)
     }
 }
 
