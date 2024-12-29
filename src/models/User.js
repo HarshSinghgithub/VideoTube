@@ -50,20 +50,21 @@ userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password)
 }
 
-userSchema.methods.getRefreshToken = async function () {
-    return jwt.sign({
-        "_id": this._id
-    },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: '1m' }
-    )
-}
-
-userSchema.methods.getAccessToken = async function () {
+userSchema.methods.getRefreshToken = function () {
     return jwt.sign({
         "_id": this._id
     },
         process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: '1m' }
+    )
+}
+
+userSchema.methods.getAccessToken = function () {
+    return jwt.sign({
+        "_id": this._id,
+        "email": this.email
+    },
+        process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: '1h' }
     )
 }
